@@ -5,57 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Jal Vaani</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-      margin: 0;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #2563eb;
-    }
+    body { font-family: Arial, sans-serif; background: #f3f4f6; margin: 0; padding: 2rem; }
+    .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2563eb; }
     .tabs { display: flex; margin: 1rem 0; border-bottom: 2px solid #eee; }
-    .tab {
-      flex: 1;
-      text-align: center;
-      padding: 0.5rem;
-      cursor: pointer;
-      font-weight: bold;
-      color: #6b7280;
-    }
+    .tab { flex: 1; text-align: center; padding: 0.5rem; cursor: pointer; font-weight: bold; color: #6b7280; }
     .tab.active { color: #2563eb; border-bottom: 2px solid #2563eb; }
     .tab-content { display: none; margin-top: 1rem; }
     .tab-content.active { display: block; }
     input[type="text"] { width: 100%; padding: 0.6rem; margin-bottom: 1rem; }
-    button {
-      padding: 0.6rem 1.2rem;
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+    button { padding: 0.6rem 1.2rem; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
     button:disabled { background: #93c5fd; }
-    .result {
-      margin-top: 2rem;
-      background: #eef2ff;
-      padding: 1rem;
-      border-radius: 8px;
-    }
-    .error {
-      margin-top: 1rem;
-      color: red;
-      font-weight: bold;
-    }
+    .result { margin-top: 2rem; background: #eef2ff; padding: 1rem; border-radius: 8px; }
+    .error { margin-top: 1rem; color: red; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -148,14 +110,14 @@
       callBackend(text);
     });
 
-    // Image input (placeholder logic)
+    // Image input (placeholder)
     document.getElementById('image-btn').addEventListener('click', () => {
       const file = document.getElementById('image-input').files[0];
       if (!file) return showError("Select an image first");
       callBackend("Extracted text from image (placeholder)");
     });
 
-    // Voice input (placeholder logic)
+    // Voice input (placeholder)
     document.getElementById('voice-btn').addEventListener('click', () => {
       callBackend("Spoken street sign text (placeholder)");
     });
