@@ -6,70 +6,62 @@
   <title>Jal Vaani</title>
   <style>
     body {
-      font-family: system-ui, sans-serif;
-      background-color: #f9fafb;
-      margin: 0; padding: 1rem;
-      display: flex; justify-content: center;
-      color: #1f2937;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 2rem;
     }
     .container {
-      max-width: 650px; width: 100%;
-      background: white; border-radius: 10px;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-      padding: 1.5rem;
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .logo { text-align: center; }
-    .logo img { height: 60px; margin-bottom: 0.5rem; }
     h1 {
       text-align: center;
-      margin: 0;
-      font-size: 2rem;
       color: #2563eb;
     }
-    p.description {
+    .tabs { display: flex; margin: 1rem 0; border-bottom: 2px solid #eee; }
+    .tab {
+      flex: 1;
       text-align: center;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-weight: bold;
       color: #6b7280;
-      margin-bottom: 1.5rem;
     }
-    .tabs { display: flex; border-bottom: 2px solid #e5e7eb; }
-    .tab { flex: 1; text-align: center; padding: 0.75rem 0; cursor: pointer;
-      font-weight: 600; color: #6b7280; border-bottom: 2px solid transparent; }
-    .tab.active { color: #2563eb; border-color: #2563eb; }
+    .tab.active { color: #2563eb; border-bottom: 2px solid #2563eb; }
     .tab-content { display: none; margin-top: 1rem; }
     .tab-content.active { display: block; }
-    label { display: block; margin-bottom: 0.25rem; font-weight: 600; }
-    input[type="text"], input[type="file"] {
-      width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 5px;
-      margin-bottom: 1rem;
-    }
+    input[type="text"] { width: 100%; padding: 0.6rem; margin-bottom: 1rem; }
     button {
-      background: #2563eb; color: white; border: none;
-      padding: 0.6rem 1.2rem; font-size: 1rem; border-radius: 6px;
-      cursor: pointer; font-weight: 600; transition: background 0.2s;
+      padding: 0.6rem 1.2rem;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    button:hover:not(:disabled) { background: #1e40af; }
-    button:disabled { background: #93c5fd; cursor: not-allowed; }
-    .btn-outline { background: transparent; border: 2px solid #2563eb; color: #2563eb; }
-    .btn-outline:hover { background: #2563eb; color: white; }
-    .result-card {
-      background: #e0e7ff; border-radius: 6px; padding: 1rem;
-      margin-top: 1.5rem; color: #1e40af;
+    button:disabled { background: #93c5fd; }
+    .result {
+      margin-top: 2rem;
+      background: #eef2ff;
+      padding: 1rem;
+      border-radius: 8px;
     }
-    .error-message {
-      background: #fee2e2; color: #b91c1c; padding: 0.75rem 1rem;
-      border-radius: 6px; margin-top: 1rem;
+    .error {
+      margin-top: 1rem;
+      color: red;
+      font-weight: bold;
     }
-    .image-preview { max-height: 180px; margin-top: 1rem; width: 100%; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo">
-      <!-- Replace with your uploaded logo -->
-      <img src="logo.png" alt="Jal Vaani Logo" />
-    </div>
     <h1>Jal Vaani</h1>
-    <p class="description">Convert street signs between languages using text, images, or voice input</p>
+    <p style="text-align:center;color:#6b7280;">Convert street signs between languages using text, images, or voice input</p>
 
     <div class="tabs">
       <div class="tab active" data-tab="text">Text Input</div>
@@ -77,99 +69,96 @@
       <div class="tab" data-tab="voice">Voice Input</div>
     </div>
 
+    <!-- Text Input -->
     <div id="text" class="tab-content active">
-      <label>Enter text:</label>
-      <input type="text" id="text-input" placeholder="Type text..." />
-      <button id="text-submit-btn">Transliterate</button>
+      <input type="text" id="text-input" placeholder="Enter text..." />
+      <button id="text-btn">Transliterate</button>
     </div>
 
+    <!-- Image Input -->
     <div id="image" class="tab-content">
-      <label>Upload an image:</label>
-      <input type="file" id="image-upload" accept="image/*" />
-      <button class="btn-outline" id="image-btn">Choose Image</button>
-      <img id="image-preview" class="image-preview" hidden />
+      <input type="file" id="image-input" accept="image/*" />
+      <button id="image-btn">Process Image</button>
     </div>
 
+    <!-- Voice Input -->
     <div id="voice" class="tab-content">
       <button id="voice-btn">Start Recording</button>
-      <p style="color:#6b7280;">Speak clearly into your microphone</p>
+      <p style="font-size:0.9rem;color:#6b7280;">Click and speak clearly into your microphone</p>
     </div>
 
-    <div id="error" class="error-message" hidden></div>
-    <div id="result" class="result-card" hidden>
-      <div><strong>Original:</strong> <span id="res-original"></span></div>
-      <div><strong>Transliterated:</strong> <span id="res-trans"></span></div>
-      <div><strong>Confidence:</strong> <span id="res-conf"></span></div>
+    <!-- Results -->
+    <div id="result" class="result" hidden>
+      <p><strong>Original:</strong> <span id="res-original"></span></p>
+      <p><strong>Transliterated:</strong> <span id="res-translit"></span></p>
+      <p><strong>Confidence:</strong> <span id="res-confidence"></span></p>
     </div>
+    <div id="error" class="error" hidden></div>
   </div>
 
   <script>
     const tabs = document.querySelectorAll('.tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-    const errorEl = document.getElementById('error');
-    const resultEl = document.getElementById('result');
-    const resOriginal = document.getElementById('res-original');
-    const resTrans = document.getElementById('res-trans');
-    const resConf = document.getElementById('res-conf');
+    const contents = document.querySelectorAll('.tab-content');
+    const resultBox = document.getElementById('result');
+    const errorBox = document.getElementById('error');
 
-    // 👉 Replace this with your real API key
-    const OPENAI_API_KEY = "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";
+    function showResult(original, translit, confidence) {
+      document.getElementById('res-original').textContent = original;
+      document.getElementById('res-translit').textContent = translit;
+      document.getElementById('res-confidence').textContent = (confidence*100).toFixed(0) + "% accurate";
+      resultBox.hidden = false;
+      errorBox.hidden = true;
+    }
 
-    // Switch tabs
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.hidden = false;
+      resultBox.hidden = true;
+    }
+
+    async function callBackend(content) {
+      try {
+        const res = await fetch('/api/transliterate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: content })
+        });
+        if (!res.ok) throw new Error("API error");
+        const data = await res.json();
+        showResult(data.original, data.transliterated, data.confidence);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    // Tab switching
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(tab.dataset.tab).classList.add('active');
       });
     });
 
-    function showError(msg) {
-      errorEl.textContent = msg;
-      errorEl.hidden = false;
-      resultEl.hidden = true;
-    }
-
-    function showResult(orig, trans) {
-      resOriginal.textContent = orig;
-      resTrans.textContent = trans;
-      resConf.textContent = "95% accurate";
-      resultEl.hidden = false;
-      errorEl.hidden = true;
-    }
-
-    async function callAPI(content) {
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "You are a transliteration assistant." },
-            { role: "user", content: content }
-          ],
-          temperature: 0.3
-        })
-      });
-      if (!res.ok) throw new Error("API failed");
-      const data = await res.json();
-      return data.choices[0].message.content.trim();
-    }
-
-    document.getElementById('text-submit-btn').onclick = async () => {
+    // Text input
+    document.getElementById('text-btn').addEventListener('click', () => {
       const text = document.getElementById('text-input').value.trim();
-      if (!text) return showError("Enter some text!");
-      try {
-        const translit = await callAPI(text);
-        showResult(text, translit);
-      } catch (e) {
-        showError(e.message);
-      }
-    };
+      if (!text) return showError("Enter some text");
+      callBackend(text);
+    });
+
+    // Image input (placeholder logic)
+    document.getElementById('image-btn').addEventListener('click', () => {
+      const file = document.getElementById('image-input').files[0];
+      if (!file) return showError("Select an image first");
+      callBackend("Extracted text from image (placeholder)");
+    });
+
+    // Voice input (placeholder logic)
+    document.getElementById('voice-btn').addEventListener('click', () => {
+      callBackend("Spoken street sign text (placeholder)");
+    });
   </script>
 </body>
 </html>
