@@ -1,152 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Indian Street Sign Converter & Reader</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 2rem;
-    background: #f0f0f0;
-  }
-  h1 {
-    text-align: center;
-  }
-  .container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 1rem 2rem 2rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 10px #ccc;
-  }
-  input[type="file"] {
-    margin-bottom: 1rem;
-  }
-  button {
-    margin: 0.5rem 0.5rem 0.5rem 0;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-  }
-  #resultText {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #e8f0fe;
-    border-radius: 5px;
-    min-height: 50px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jal Vaani</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 1rem;
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      padding: 1.5rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 0.25rem;
+      font-weight: 700;
+      font-size: 1.75rem;
+      color: #2563eb;
+    }
+    p.description {
+      text-align: center;
+      color: #6b7280;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+    .tabs { display: flex; border-bottom: 2px solid #e5e7eb; margin-bottom: 1rem; }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem 0;
+      cursor: pointer;
+      font-weight: 600;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      user-select: none;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab.active { color: #2563eb; border-color: #2563eb; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    label { display: block; margin-bottom: 0.25rem; font-weight: 600; color: #374151; }
+    input[type="text"], select {
+      width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px;
+      font-size: 1rem; margin-bottom: 1rem; color: #111827;
+    }
+    input[type="file"] { display: none; }
+    button {
+      background-color: #2563eb; color: white; border: none;
+      padding: 0.6rem 1.2rem; font-size: 1rem; border-radius: 4px; cursor: pointer;
+      font-weight: 600; width: 100%; transition: background-color 0.2s;
+    }
+    button:disabled { background-color: #93c5fd; cursor: not-allowed; }
+    button:hover:not(:disabled) { background-color: #1e40af; }
+    .btn-outline {
+      background-color: transparent; border: 2px solid #2563eb; color: #2563eb; width: 100%;
+    }
+    .btn-outline:hover:not(:disabled) { background-color: #2563eb; color: white; }
+    .result-card {
+      background-color: #e0e7ff; border-radius: 6px; padding: 1rem;
+      margin-top: 1.5rem; color: #1e40af;
+    }
+    .result-row { margin-bottom: 0.75rem; }
+    .result-label { font-weight: 700; margin-bottom: 0.25rem; }
+    .error-message {
+      background-color: #fee2e2; color: #b91c1c;
+      padding: 0.75rem 1rem; border-radius: 6px;
+      margin-top: 1rem; font-weight: 600;
+    }
+    .image-preview {
+      margin-top: 1rem; max-height: 180px; border-radius: 6px;
+      border: 1px solid #d1d5db; object-fit: contain; width: 100%;
+    }
+    .voice-instructions { font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem; text-align: center; }
+    @media (min-width: 640px) { button { width: auto; min-width: 160px; } }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Indian Street Sign Converter & Reader</h1>
-
-    <h3>1. Convert Image (Street Sign) to Text</h3>
-    <input type="file" id="imageInput" accept="image/*" />
-    <button id="convertImageBtn">Convert Image to Text</button>
-
-    <h3>2. Voice Input (Speak Street Name)</h3>
-    <button id="startVoiceBtn">Start Voice Input</button>
-    <button id="stopVoiceBtn" disabled>Stop Voice Input</button>
-
-    <h3>3. Text Output</h3>
-    <div id="resultText" contenteditable="true" aria-label="Recognized text will appear here"></div>
-
-    <h3>4. Read Text Aloud</h3>
-    <button id="readTextBtn">Read Text</button>
+  <div class="container" role="main" aria-label="Jal Vaani">
+    <h1>Jal Vaani</h1>
+    <p class="description">Convert street signs between languages using text, images, or voice input</p>
+    <nav class="tabs" role="tablist" aria-label="Input methods">
+      <button class="tab active" role="tab" aria-selected="true" aria-controls="text-tab" id="text-tab-btn" tabindex="0">Text Input</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="image-tab" id="image-tab-btn" tabindex="-1">Image Input</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="voice-tab" id="voice-tab-btn" tabindex="-1">Voice Input</button>
+    </nav>
+    <section id="text-tab" class="tab-content active" role="tabpanel" aria-labelledby="text-tab-btn">
+      <label for="text-input">Enter text:</label>
+      <input type="text" id="text-input" placeholder="Type or paste text here..." autocomplete="off" />
+      <button id="text-submit-btn">Transliterate Text</button>
+    </section>
+    <section id="image-tab" class="tab-content" role="tabpanel" aria-labelledby="image-tab-btn">
+      <label for="image-upload">Upload an image:</label>
+      <input type="file" id="image-upload" accept="image/*" />
+      <button id="image-upload-btn" class="btn-outline">Choose Image</button>
+      <img id="image-preview" class="image-preview" alt="Selected image preview" hidden />
+    </section>
+    <section id="voice-tab" class="tab-content" role="tabpanel" aria-labelledby="voice-tab-btn">
+      <button id="voice-start-btn">Start Recording</button>
+      <p class="voice-instructions">Click the button and speak clearly into your microphone</p>
+    </section>
+    <div id="error-message" class="error-message" role="alert" aria-live="assertive" hidden></div>
+    <div id="result" class="result-card" aria-live="polite" hidden>
+      <div class="result-row">
+        <div class="result-label">Original:</div>
+        <div id="result-original"></div>
+      </div>
+      <div class="result-row">
+        <div class="result-label">Transliterated:</div>
+        <div id="result-transliterated"></div>
+      </div>
+      <div class="result-row">
+        <div class="result-label">Confidence:</div>
+        <div id="result-confidence"></div>
+      </div>
+    </div>
   </div>
-
-  <!-- Tesseract.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
-
   <script>
-    const imageInput = document.getElementById('imageInput');
-    const convertImageBtn = document.getElementById('convertImageBtn');
-    const resultText = document.getElementById('resultText');
-    const startVoiceBtn = document.getElementById('startVoiceBtn');
-    const stopVoiceBtn = document.getElementById('stopVoiceBtn');
-    const readTextBtn = document.getElementById('readTextBtn');
+    (() => {
+      // 🔑 Replace this with your own OpenAI API Key
+      const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE";
 
-    // OCR: Image to Text
-    convertImageBtn.addEventListener('click', () => {
-      if (!imageInput.files.length) {
-        alert('Please select an image first.');
-        return;
+      // Elements
+      const tabs = document.querySelectorAll('.tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const errorMessageEl = document.getElementById('error-message');
+      const resultEl = document.getElementById('result');
+      const resultOriginalEl = document.getElementById('result-original');
+      const resultTransliteratedEl = document.getElementById('result-transliterated');
+      const resultConfidenceEl = document.getElementById('result-confidence');
+      const textInput = document.getElementById('text-input');
+      const textSubmitBtn = document.getElementById('text-submit-btn');
+      const imageUploadInput = document.getElementById('image-upload');
+      const imageUploadBtn = document.getElementById('image-upload-btn');
+      const imagePreview = document.getElementById('image-preview');
+      const voiceStartBtn = document.getElementById('voice-start-btn');
+
+      let isProcessing = false;
+      let recognition = null;
+
+      function clearMessages() {
+        errorMessageEl.hidden = true;
+        errorMessageEl.textContent = '';
+        resultEl.hidden = true;
+        resultOriginalEl.textContent = '';
+        resultTransliteratedEl.textContent = '';
+        resultConfidenceEl.textContent = '';
       }
-      const file = imageInput.files[0];
-      const reader = new FileReader();
-      reader.onload = function () {
-        const img = new Image();
-        img.src = reader.result;
-        img.onload = () => {
-          resultText.textContent = 'Processing image... Please wait.';
-          Tesseract.recognize(
-            img,
-            'eng', // English language, can add 'hin' for Hindi if trained data available
-            { logger: m => console.log(m) }
-          ).then(({ data: { text } }) => {
-            resultText.textContent = text.trim() || 'No text recognized.';
-          }).catch(err => {
-            resultText.textContent = 'Error recognizing text: ' + err.message;
+      function showError(message) {
+        errorMessageEl.textContent = message;
+        errorMessageEl.hidden = false;
+        resultEl.hidden = true;
+      }
+      function showResult(original, transliterated, confidence) {
+        resultOriginalEl.textContent = original;
+        resultTransliteratedEl.textContent = transliterated;
+        resultConfidenceEl.textContent = (confidence * 100).toFixed(0) + '% accurate';
+        resultEl.hidden = false;
+        errorMessageEl.hidden = true;
+      }
+
+      // 🔥 Core function to call OpenAI API
+      async function callOpenAIAPI(data) {
+        if (!OPENAI_API_KEY || OPENAI_API_KEY === "YOUR_OPENAI_API_KEY_HERE") {
+          throw new Error("API key is not configured.");
+        }
+
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: "You are a transliteration assistant. Only return transliterated text." },
+              { role: "user", content: data.content }
+            ],
+            temperature: 0.3
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || 'Failed to connect to OpenAI API.');
+        }
+
+        const responseData = await response.json();
+        const resultText = responseData.choices[0].message.content.trim();
+
+        return { original: data.content, transliterated: resultText, confidence: 0.95 };
+      }
+
+      // Tab switching
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          if (tab.classList.contains('active')) return;
+          tabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+            t.setAttribute('tabindex', '-1');
           });
+          tabContents.forEach(tc => tc.classList.remove('active'));
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          tab.setAttribute('tabindex', '0');
+          const controls = tab.getAttribute('aria-controls');
+          document.getElementById(controls).classList.add('active');
+          clearMessages();
+        });
+      });
+
+      // Handle text submit
+      textSubmitBtn.addEventListener('click', async () => {
+        clearMessages();
+        const text = textInput.value.trim();
+        if (!text) {
+          showError('Please enter text to transliterate');
+          return;
+        }
+        if (isProcessing) return;
+        isProcessing = true;
+        textSubmitBtn.disabled = true;
+        textSubmitBtn.textContent = 'Processing...';
+        try {
+          const result = await callOpenAIAPI({ content: text });
+          showResult(result.original, result.transliterated, result.confidence);
+        } catch (err) {
+          showError('Failed to transliterate text. ' + err.message);
+        } finally {
+          isProcessing = false;
+          textSubmitBtn.disabled = false;
+          textSubmitBtn.textContent = 'Transliterate Text';
+        }
+      });
+
+      // Handle image upload
+      imageUploadBtn.addEventListener('click', () => {
+        imageUploadInput.click();
+      });
+      imageUploadInput.addEventListener('change', async () => {
+        clearMessages();
+        const file = imageUploadInput.files[0];
+        if (!file) return;
+        if (isProcessing) return;
+        isProcessing = true;
+        imageUploadBtn.disabled = true;
+        imageUploadBtn.textContent = 'Processing Image...';
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          imagePreview.src = e.target.result;
+          imagePreview.hidden = false;
+          try {
+            const result = await callOpenAIAPI({ content: "Extract text from this image and transliterate it." });
+            showResult("Image text", result.transliterated, result.confidence);
+          } catch (err) {
+            showError('Failed to process image. ' + err.message);
+          } finally {
+            isProcessing = false;
+            imageUploadBtn.disabled = false;
+            imageUploadBtn.textContent = 'Choose Image';
+          }
         };
-      };
-      reader.readAsDataURL(file);
-    });
+        reader.readAsDataURL(file);
+      });
 
-    // Voice Recognition: Speech to Text
-    let recognition;
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-      recognition.lang = 'en-IN'; // Indian English accent
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.onresult = (event) => {
-        const speechResult = event.results[0][0].transcript;
-        resultText.textContent = speechResult;
-      };
-
-      recognition.onerror = (event) => {
-        alert('Speech recognition error: ' + event.error);
-      };
-
-      recognition.onend = () => {
-        startVoiceBtn.disabled = false;
-        stopVoiceBtn.disabled = true;
-      };
-    } else {
-      alert('Speech Recognition API not supported in this browser.');
-    }
-
-    startVoiceBtn.addEventListener('click', () => {
-      if (recognition) {
+      // Handle voice input
+      voiceStartBtn.addEventListener('click', () => {
+        clearMessages();
+        if (isProcessing) return;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          showError('Speech recognition is not supported in this browser.');
+          return;
+        }
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.onstart = () => {
+          isProcessing = true;
+          voiceStartBtn.disabled = true;
+          voiceStartBtn.textContent = 'Listening...';
+        };
+        recognition.onerror = (event) => {
+          showError('Speech recognition error: ' + event.error);
+          isProcessing = false;
+          voiceStartBtn.disabled = false;
+          voiceStartBtn.textContent = 'Start Recording';
+        };
+        recognition.onresult = async (event) => {
+          const spokenText = event.results[0][0].transcript;
+          try {
+            const result = await callOpenAIAPI({ content: spokenText });
+            showResult(spokenText, result.transliterated, result.confidence);
+          } catch (err) {
+            showError('Failed to process voice input. ' + err.message);
+          } finally {
+            isProcessing = false;
+            voiceStartBtn.disabled = false;
+            voiceStartBtn.textContent = 'Start Recording';
+          }
+        };
+        recognition.onend = () => {
+          if (isProcessing) {
+            isProcessing = false;
+            voiceStartBtn.disabled = false;
+            voiceStartBtn.textContent = 'Start Recording';
+          }
+        };
         recognition.start();
-        startVoiceBtn.disabled = true;
-        stopVoiceBtn.disabled = false;
-        resultText.textContent = 'Listening...';
-      }
-    });
-
-    stopVoiceBtn.addEventListener('click', () => {
-      if (recognition) {
-        recognition.stop();
-      }
-    });
-
-    // Text to Speech
-    readTextBtn.addEventListener('click', () => {
-      const text = resultText.textContent.trim();
-      if (!text) {
-        alert('No text to read.');
-        return;
-      }
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN'; // Indian English accent
-      speechSynthesis.speak(utterance);
-    });
+      });
+    })();
   </script>
 </body>
 </html>
